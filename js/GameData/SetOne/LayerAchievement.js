@@ -280,7 +280,127 @@ addLayer("ach", {
         done() { return player.main.tier.gte("640") },
         tooltip: `Obtain Tier 640!`,
       },
+
+      "TTFT1": {
+        name: `Oreo Production!`,
+        done() { return player.main.factories.gt("1") },
+        tooltip: `Get your first Factory!`,
+      },
+
+      "TTFT2": {
+        name: `A good start`,
+        done() { return player.main.factories.gt("5") },
+        tooltip: `Get your 5th Factory!`,
+      },
+
+      "TTFT3": {
+        name: `so many oreos`,
+        done() { return player.main.factories.gt("10") },
+        tooltip: `Get your 10th Factory!`,
+      },
+
+      "TTFT4": {
+        name: `20 is a good milestone`,
+        done() { return player.main.factories.gt("20") },
+        tooltip: `Get your 20th Factory!`,
+      },
+
+      "TTFT5": {
+        name: `UNLIMITED OREOS`,
+        done() { return player.main.factories.gt("33") },
+        tooltip: `Get your 33rd Factory!`,
+      },
       
+      "TTFT6": {
+        name: `TOO MANY OREOS`,
+        done() { return player.main.factories.gt("50") },
+        tooltip: `Get your 50th Factory!`,
+      },
+
+      "TTFT7": {
+        name: `how many is too many again?`,
+        done() { return player.main.factories.gt("75") },
+        tooltip: `Get your 75th Factory!`,
+      },
+
+      "TTFT8": {
+        name: `how did you get this many`,
+        done() { return player.main.factories.gt("125") },
+        tooltip: `Get your 125th Factory!`,
+      },
+
+      "TTFT9": {
+        name: `okay thats enough`,
+        done() { return player.main.factories.gt("180") },
+        tooltip: `Get your 180th Factory!`,
+      },
+
+      "TTFT10": {
+        name: `I SAID THATS ENOUGH`,
+        done() { return player.main.factories.gt("250") },
+        tooltip: `Get your 250th Factory!`,
+      },
+
+      "TTFT11": {
+        name: `...`,
+        done() { return player.main.factories.gt("333") },
+        tooltip: `Get 333 factories!`,
+      },
+
+      "TTFT12": {
+        name: `i quit`,
+        done() { return player.main.factories.gt("450") },
+        tooltip: `Get 450 factories!`,
+      },
+
+      "Dark1": {
+        name: `And everything resets all over again...`,
+        done() { return player.main.supertier.gt("1") },
+        tooltip: `Get your first Super Tier!`,
+      },
+
+      "Dark2": {
+        name: `So dark!`,
+        done() { return player.main.supertier.gt("2") },
+        tooltip: `Get your second Super Tier!`,
+      },
+
+      "Dark3": {
+        name: `Wow you're good!`,
+        done() { return player.main.supertier.gt("5") },
+        tooltip: `Get your 5th Super Tier!`,
+      },
+
+      "Dark4": {
+        name: `this super tier stuff aint shi-`,
+        done() { return player.main.supertier.gt("10") },
+        tooltip: `Get your 10th Super Tier!`,
+      },
+
+      "Dark5": {
+        name: `You must be grinding alot!`,
+        done() { return player.main.supertier.gt("20") },
+        tooltip: `Get your 20th Super Tier!`,
+      },
+
+      "Dark6": {
+        name: `wow you just dont know when to quit..`,
+        done() { return player.main.supertier.gt("50") },
+        tooltip: `Get your 50th Super Tier!`,
+      },
+
+      "Dark7": {
+        name: `How is this even possible`,
+        done() { return player.main.supertier.gt("100") },
+        tooltip: `Get your 100th Super Tier!`,
+      },
+
+      "Dark8": {
+        name: `wow...`,
+        done() { return player.main.supertier.gt("200") },
+        tooltip: `Get your 200th Super Tier!`,
+      },
+
       "TTAC1": {
         name: `Bronze Mastery`,
         done() { return player.ach.achievements.length > 5 },
@@ -371,12 +491,26 @@ addLayer("ach", {
           tooltip: `Have more than 50 achievements`,
           style() {
             return {
-              "background-image" : "url('images/MasteryVI.png')",
+              "background-image" : "url('images/MasteryVII.png')",
               "background-size" : "100% !important"
             }
           },
           unlocked() {
             return player.ach.achievements.length > 50
+          }
+        },
+        "TTAC8": {
+          name: `Grandidierite Mastery`,
+          done() { return player.ach.achievements.length > 60 },
+          tooltip: `Have more than 50 achievements`,
+          style() {
+            return {
+              "background-image" : "url('images/MasteryVIII.png')",
+              "background-size" : "100% !important"
+            }
+          },
+          unlocked() {
+            return player.ach.achievements.length > 60
           }
         },
     },
@@ -390,6 +524,7 @@ addLayer("ach", {
              ["display-text", function() { return `<MA style='font-size: 25px'>Your acheivements raise Point generation by ^${format(tmp.ach.achivementPow)}</MA><br>
              <MA style="font-size: 20px; color: #595959">1.005x for each achievement</MA>` }],
             "blank", "blank",
+
        ["display-text", function() { return "Stellar Achievements"}],
        ["row", [["achievement", "TTST1"], ["achievement", "TTST2"], ["achievement", "TTST3"], ["achievement", "TTST4"]]],
        ["row", [["achievement", "TTST5"], ["achievement", "TTST6"], ["achievement", "TTST7"], ["achievement", "TTST8"]]],
@@ -397,18 +532,21 @@ addLayer("ach", {
        ["row", [["achievement", "TTST12"], ["achievement", "TTST13"], ["achievement", "TTST14"]]],
        "blank",
        "blank",
+
        ["display-text", function() { return "Ethereum Achievements" }],
        ["row", [["achievement", "TTET1"], ["achievement", "TTET2"], ["achievement", "TTET3"], ["achievement", "TTET4"]]],
        ["row", [["achievement", "TTET5"], ["achievement", "TTET6"], ["achievement", "TTET7"], ["achievement", "TTET8"]]],
        ["row", [["achievement", "TTET9"], ["achievement", "TTET10"], ["achievement", "TTET11"], ["achievement", "TTET12"],]],
        "blank",
        "blank",
+
         ["display-text", function() { return "Bitcoin Achievements" }],
         ["row", [["achievement", "TTBT1"], ["achievement", "TTBT2"], ["achievement", "TTBT3"], ["achievement", "TTBT4"]]],
         ["row", [["achievement", "TTBT5"], ["achievement", "TTBT6"], ["achievement", "TTBT7"], ["achievement", "TTBT8"]]],
         ["row", [["achievement", "TTBT9"], ["achievement", "TTBT10"], ["achievement", "TTBT11"], ["achievement", "TTBT12"]]],
         "blank",
         "blank",
+
         ["display-text", function() { return "Tier Achievements" }],
         ["row", [["achievement", "TTT1"], ["achievement", "TTT2"], ["achievement", "TTT3"], ["achievement", "TTT4"]]],
         ["row", [["achievement", "TTT5"], ["achievement", "TTT6"], ["achievement", "TTT7"], ["achievement", "TTT8"]]],
@@ -416,6 +554,20 @@ addLayer("ach", {
         ["row", [["achievement", "TTT13"]]],
         "blank",
         "blank",
+
+        ["display-text", function() { return "Factory Achievements" }],
+        ["row", [["achievement", "TTFT1"], ["achievement", "TTFT2"], ["achievement", "TTFT3"], ["achievement", "TTFT4"]]],
+        ["row", [["achievement", "TTFT5"], ["achievement", "TTFT6"], ["achievement", "TTFT7"], ["achievement", "TTFT8"]]],
+        ["row", [["achievement", "TTFT9"], ["achievement", "TTFT10"], ["achievement", "TTFT11"], ["achievement", "TTFT12"]]],
+        "blank",
+        "blank",
+
+        ["display-text", function() { return "Darkness Achievements" }],
+        ["row", [["achievement", "Dark1"], ["achievement", "Dark2"], ["achievement", "Dark3"], ["achievement", "Dark4"]]],
+        ["row", [["achievement", "Dark5"], ["achievement", "Dark6"], ["achievement", "Dark7"], ["achievement", "Dark8"]]],
+        "blank",
+        "blank",
+
         ["display-text", function() { return "Mastery Achievements" }],
         ["row", [["achievement", "TTAC1"], ["achievement", "TTAC2"], ["achievement", "TTAC3"], ["achievement", "TTAC4"]]],
         ["row", [["achievement", "TTAC5"], ["achievement", "TTAC6"], ["achievement", "TTAC7"]]]

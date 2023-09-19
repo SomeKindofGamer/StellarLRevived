@@ -16,7 +16,9 @@ addLayer("main", {
       points: new Decimal(0),
       eth: new Decimal(0),
       btc: new Decimal(0),
+      drk: new Decimal(0),
       tier: new Decimal(0),
+      supertier: new Decimal(0),
 
       // Bitcoin related
       hardfork: new Decimal(0),
@@ -49,6 +51,7 @@ addLayer("main", {
       auto: {
         T1AT1: false,
         T1AT2: false,
+        T1AT3: false,
 
         T2AT1: false,
         T2AT2: false,
@@ -129,6 +132,22 @@ addLayer("main", {
     Calculation = Calculation.div(buyableEffect("main", "Cheaper Stellar Tier"))
     Calculation = Calculation.div(buyableEffect("main", "Cheaper Oreo Tier"))
     Calculation = Calculation.div(buyableEffect("main", "Bitcoin Cheaper Tier"))
+    return Calculation
+  },
+
+  supertierCostCalc() {
+    let Base = new Decimal(50)
+    let Tier = player.main.supertier
+    let Layer = new Decimal(1.287)
+
+    let ScaleI = new Decimal.pow(10, Tier)
+    let CostI = new Decimal.mul(ScaleI, Tier)
+
+    let ScaleII = new Decimal.pow(5, Tier)
+    let CostII = new Decimal.mul(ScaleII, Tier)
+
+    let Calculation = new Decimal.mul(CostI, CostII)
+
     return Calculation
   },
 
@@ -313,8 +332,6 @@ addLayer("main", {
     return Mark
   },
 
-
-
   bitcoinGeneration() {
     let Base = player.main.hardforklvl
     let Power = new Decimal(2.5)
@@ -356,6 +373,30 @@ addLayer("main", {
     Factory = Factory.add(1)
 
     let Production = new Decimal.pow(3, Factory).sub(1)
+    Production = Production.add(1)
+    return Production
+  },
+
+  darknessGainCalc() {
+    let SuperT = player.main.supertier
+
+    let Production = new Decimal.pow(3, SuperT).sub(1)
+
+    if (player.main.supertier.gte(2)) {
+      Production = Production.mul(10)
+    }
+    if (player.main.supertier.gte(3)) {
+      Production = Production.mul(200)
+    }
+    if (player.main.supertier.gte(5)) {
+      Production = Production.mul(1000)
+    }
+    if (player.main.supertier.gte(6)) {
+      Production = Production.mul(5000)
+    }
+    if (player.main.supertier.gte(8)) {
+      Production = Production.mul(10000)
+    }
     Production = Production.add(1)
     return Production
   },
@@ -831,9 +872,15 @@ addLayer("main", {
     if (tmp.main.clickables.T1AT2.canRun) buyBuyable(this.layer, "Ethereum Booster")
     if (tmp.main.clickables.T1AT2.canRun) buyBuyable(this.layer, "Ethereum Cheaper Factory")
 
+    if (tmp.main.clickables.T1AT3.canRun) buyBuyable(this.layer, "Oreo Point Production")
+    if (tmp.main.clickables.T1AT3.canRun) buyBuyable(this.layer, "Oreo Stellar Production")
+    if (tmp.main.clickables.T1AT3.canRun) buyBuyable(this.layer, "Oreo Cheaper")
+    if (tmp.main.clickables.T1AT3.canRun) buyBuyable(this.layer, "Cheaper Oreo Tier")
+    if (tmp.main.clickables.T1AT3.canRun) buyBuyable(this.layer, "Oreo Looming Offsetter")
+    if (tmp.main.clickables.T1AT3.canRun) buyBuyable(this.layer, "Oreo Bonus Booster")
 
     if (tmp.main.clickables.T2AT1.canRun) clickClickable(this.layer, "Tier Up")
-    if (tmp.main.clickables.T2AT2.canRun) clickClickable(this.layer, "Facotry Reset")
+    if (tmp.main.clickables.T2AT2.canRun) clickClickable(this.layer, "Factory Reset")
 
     const activeChallenge = player[this.layer].activeChallenge;
     if (activeChallenge && canCompleteChallenge(this.layer, activeChallenge)) {
@@ -849,6 +896,10 @@ addLayer("main", {
 
     if (player.main.factories.gte(1)) {
       player.main.oreos = player.main.oreos.add((tmp.main.oreoGainCalc).times(diff))
+    }
+
+    if (player.main.supertier.gte(1)) {
+      player.main.drk = player.main.drk.add((tmp.main.darknessGainCalc).times(diff))
     }
 
     if (hasMilestone("main", "TM15")) {
@@ -2116,6 +2167,80 @@ addLayer("main", {
       }
     },
 
+    "Super Tier": {
+      title() {
+        let state = player.main.supertier
+        return `<b style="font-size:35px">Super Tier #${state}</b><br>
+        Reset EVERYTHING in exchange for a Super Tier for even further progress<br>
+        Need ${format(tmp.main.supertierCostCalc)} Darkness to Tier Up`
+      },
+      canClick() {
+        return player.main.drk.gte(tmp.main.supertierCostCalc)
+      },
+      onClick() {
+        player.main.supertier = player.main.supertier.add(1)
+        player.points = new Decimal(0)
+        player.main.tier = new Decimal(0)
+        player.main.factories = new Decimal(0)
+        player.main.points = new Decimal(0)
+        player.main.eth = new Decimal(0)
+        player.main.unit = new Decimal(1.0)
+        player.main.oreos = new Decimal(0)
+        player.main.drk = new Decimal(0)
+        player.main.buyables["Stellar Point Production"] = new Decimal(0)
+        player.main.buyables["Stellar Production"] = new Decimal(0)
+        player.main.buyables["Cheaper Stellar"] = new Decimal(0)
+        player.main.buyables["Cheaper Stellar Tier"] = new Decimal(0)
+        player.main.buyables["Stellar Accelerant Boost"] = new Decimal(0)
+    
+        player.main.buyables["Ethereum Point Production"] = new Decimal(0)
+        player.main.buyables["Ethereum Stellar Mag Increaser"] = new Decimal(0)
+        player.main.buyables["Ethereum Stellar Mag Booster"] = new Decimal(0)
+        player.main.buyables["Ethereum Booster"] = new Decimal(0)
+        player.main.buyables["Ethereum Cheaper Factory"] = new Decimal(0)
+    
+        player.main.buyables["Oreo Point Production"] = new Decimal(0)
+        player.main.buyables["Oreo Stellar Production"] = new Decimal(0)
+        player.main.buyables["Oreo Cheaper"] = new Decimal(0)
+        player.main.buyables["Cheaper Oreo Tier"] = new Decimal(0)
+        player.main.buyables["Oreo Looming Offsetter"] = new Decimal(0)
+        player.main.buyables["Oreo Bonus Booster"] = new Decimal(0)
+      },
+      style() {
+        if (tmp[this.layer].clickables[this.id].canClick) return {
+          "background-image": "url('images/TIERC.png')",
+          "background-size": "cover",
+          "background-color": "#ffffff",
+          "animation": "pulse 2s infinite",
+          "box-shadow": "0 0 0 0 rgba(255, 255, 255, 1)",
+          "width": "460px",
+          "height": "130px",
+          "border-radius": "10px",
+          "border": "0px",
+          "margin": "5px",
+          "text-shadow": "0px 0px 15px #000000",
+          "color": "#000000"
+        }
+        return {
+          "background-image": "url('images/TIERCT.png')",
+          "background-size": "cover",
+          "box-shadow": "0px 0px 15px rgba(171, 50, 58, 1)",
+          "width": "460px",
+          "height": " 130px",
+          "border-radius": "10px",
+          "border": "0px",
+          "margin": "5px",
+          "text-shadow": "0px 0px 10px #000000",
+          "color": "#ffffff"
+        }
+      },
+      unlocked() {
+        return true
+      }
+    },
+
+
+
 
 
 
@@ -2200,6 +2325,46 @@ addLayer("main", {
         }
       },
     },
+    T1AT3: {
+      set: "auto",
+      title() {
+        return `<b style="font-size:20px">Oreo Automator</b><br>
+      <b style="font-size:18px">${Boolean(player.main[this.set][this.id]) ? "On" : "Off"}</b>`
+
+      },
+      canClick() {
+        return true
+      },
+      onClick() {
+        player.main[this.set][this.id] = Boolean(1 - player.main[this.set][this.id])
+      },
+      canRun() {
+        return player.main[this.set][this.id] && tmp.main.clickables[this.id].canClick
+      },
+      unlocked() {
+        return hasMilestone("main", "STM4")
+      },
+      style() {
+        if (tmp[this.layer].clickables[this.id].canRun) return {
+          "background-image": "url('images/STAT_ON.png')",
+          "color": "white",
+          "border": "0px",
+          "border-radius": "5px",
+          "width": "285px",
+          "height": "auto",
+          "margin": "4px"
+        }
+        return {
+          "background-image": "url('images/STAT_OFF.png')",
+          "color": "white",
+          "border": "0px",
+          "border-radius": "5px",
+          "width": "285px",
+          "height": "auto",
+          "margin": "4px"
+        }
+      },
+    },
     T2AT1: {
       set: "auto",
       title() {
@@ -2242,9 +2407,9 @@ addLayer("main", {
     T2AT2: {
       set: "auto",
       title() {
-        return `<b style="font-size:25px">Factory Investment Automator</b><br>
-        F${format(player.main.factories)}<br><br>
-      <b style="font-size:20px">${Boolean(player.main[this.set][this.id]) ? "On" : "Off"}</b>`
+        return `<b style="font-size:20px">Factory Automator</b><br>
+        F${format(player.main.factories)}<br>
+      <b style="font-size:18px">${Boolean(player.main[this.set][this.id]) ? "On" : "Off"}</b>`
 
       },
       canClick() {
@@ -2257,7 +2422,7 @@ addLayer("main", {
         return player.main[this.set][this.id] && tmp.main.clickables[this.id].canClick
       },
       unlocked() {
-        return true
+        return hasMilestone("main", "STM3")
       },
       style() {
         if (tmp[this.layer].clickables[this.id].canRun) return {
@@ -2265,7 +2430,7 @@ addLayer("main", {
           "color": "white",
           "border": "0px",
           "border-radius": "5px",
-          "width": "300px",
+          "width": "285px",
           "height": "auto",
           "margin": "4px"
         }
@@ -2274,7 +2439,7 @@ addLayer("main", {
           "color": "white",
           "border": "0px",
           "border-radius": "5px",
-          "width": "300px",
+          "width": "285px",
           "height": "auto",
           "margin": "4px"
         }
@@ -4248,7 +4413,7 @@ addLayer("main", {
       },
       display() {
         return `${HEADERs}Build Funding v${format(player[this.layer].buyables[this.id], 0)}${HEADERe}
-        <b style="font-size:18px; text-shadow: 0px 0px 4px #000000">-${format(tmp[this.layer].buyables[this.id].effect)} Facotry Investment Cost</b><br>
+        <b style="font-size:18px; text-shadow: 0px 0px 4px #000000">-${format(tmp[this.layer].buyables[this.id].effect)} Factory Investment Cost</b><br>
     <h1>${format(tmp[this.layer].buyables[this.id].cost)} Bitcoin</h1>`
       },
       canAfford() {
@@ -4435,6 +4600,7 @@ addLayer("main", {
   },
 
   milestones: {
+    // tier stuff
     "TM1": {
       requirementDescription() {
         let STATE = []
@@ -4716,9 +4882,9 @@ addLayer("main", {
       requirementDescription() {
         let STATE = []
         if (hasMilestone(this.layer, this.id)) STATE.push('<img src="images/Checkmark_White.png" width="32" height="32">')
-        return `<b style="font-size:32px; text-shadow: 0px 0px 10px #ffffff">TIER 37 ${STATE}</b>`
+        return `<b style="font-size:32px; text-shadow: 0px 0px 10px #ffffff">TIER 34 ${STATE}</b>`
       },
-      done() { return player.main.tier.gte(37) },
+      done() { return player.main.tier.gte(34) },
       effectDescription: `<b style="font-size:22px">
       + Unlock Bitcoin`,
       style() {
@@ -4741,9 +4907,9 @@ addLayer("main", {
       requirementDescription() {
         let STATE = []
         if (hasMilestone(this.layer, this.id)) STATE.push('<img src="images/Checkmark_White.png" width="32" height="32">')
-        return `<b style="font-size:32px; text-shadow: 0px 0px 10px #ffffff">TIER 45 ${STATE}</b>`
+        return `<b style="font-size:32px; text-shadow: 0px 0px 10px #ffffff">TIER 39 ${STATE}</b>`
       },
-      done() { return player.main.tier.gte(45) },
+      done() { return player.main.tier.gte(39) },
       effectDescription: `<b style="font-size:22px">
       + Unlock 3rd Bitcoin Tab<br>
       + 1.2x Bitcoin Forked per Level`,
@@ -4767,9 +4933,9 @@ addLayer("main", {
       requirementDescription() {
         let STATE = []
         if (hasMilestone(this.layer, this.id)) STATE.push('<img src="images/Checkmark_White.png" width="32" height="32">')
-        return `<b style="font-size:32px; text-shadow: 0px 0px 10px #000000">TIER 61 ${STATE}</b>`
+        return `<b style="font-size:32px; text-shadow: 0px 0px 10px #000000">TIER 48 ${STATE}</b>`
       },
-      done() { return player.main.tier.gte(61) },
+      done() { return player.main.tier.gte(48) },
       effectDescription: `<b style="font-size:22px">
       + Unlock 4th Bitcoin Tab<br>
       + 1.3x Bitcoin Forked per Level`,
@@ -4786,16 +4952,16 @@ addLayer("main", {
         }
       },
       unlocked() {
-        return player.main.tier.gte(45)
+        return player.main.tier.gte(39)
       }
     },
     "TM14": {
       requirementDescription() {
         let STATE = []
         if (hasMilestone(this.layer, this.id)) STATE.push('<img src="images/Checkmark_White.png" width="32" height="32">')
-        return `<b style="font-size:32px; text-shadow: 0px 0px 10px #000000">TIER 77 ${STATE}</b>`
+        return `<b style="font-size:32px; text-shadow: 0px 0px 10px #000000">TIER 59 ${STATE}</b>`
       },
-      done() { return player.main.tier.gte(77) },
+      done() { return player.main.tier.gte(59) },
       effectDescription: `<b style="font-size:22px">
       + 1.4x Bitcoin Forked per Level<br>
       + Minor change in Factory Investment cost<br>
@@ -4814,16 +4980,16 @@ addLayer("main", {
         }
       },
       unlocked() {
-        return player.main.tier.gte(45)
+        return player.main.tier.gte(39)
       }
     },
     "TM15": {
       requirementDescription() {
         let STATE = []
         if (hasMilestone(this.layer, this.id)) STATE.push('<img src="images/Checkmark_White.png" width="32" height="32">')
-        return `<b style="font-size:32px; text-shadow: 0px 0px 10px #000000">TIER 93 ${STATE}</b>`
+        return `<b style="font-size:32px; text-shadow: 0px 0px 10px #000000">TIER 77 ${STATE}</b>`
       },
-      done() { return player.main.tier.gte(93) },
+      done() { return player.main.tier.gte(77) },
       effectDescription: `<b style="font-size:22px">
       + 1.5x Bitcoin Forked per Level<br>
       + ^0.975 Hardfork cost<br>
@@ -4848,21 +5014,18 @@ addLayer("main", {
         }
       },
       unlocked() {
-        return player.main.tier.gte(45)
+        return player.main.tier.gte(39)
       }
     },
     "TM16": {
       requirementDescription() {
         let STATE = []
         if (hasMilestone(this.layer, this.id)) STATE.push('<img src="images/Checkmark_White.png" width="32" height="32">')
-        return `<b style="font-size:32px; text-shadow: 0px 0px 10px #000000">TIER 125 ${STATE}</b>`
+        return `<b style="font-size:32px; text-shadow: 0px 0px 10px #000000">TIER 90 ${STATE}</b>`
       },
-      done() { return player.main.tier.gte(125) },
+      done() { return player.main.tier.gte(90) },
       effectDescription: `<b style="font-size:22px">
-      + PLACEHOLDER<br>
-      + PLACEHOLDER<br>
-      + PLACEHOLDER<br>
-      + PLACEHOLDER`,
+      + Unlock Darkness`,
       style() {
         return {
           "background-image": "url('images/MasteryVI.png')",
@@ -4876,7 +5039,7 @@ addLayer("main", {
         }
       },
       unlocked() {
-        return player.main.tier.gte(93)
+        return player.main.tier.gte(77)
       }
     },
     "TM17": {
@@ -4904,7 +5067,7 @@ addLayer("main", {
         }
       },
       unlocked() {
-        return player.main.tier.gte(93)
+        return player.main.tier.gte(77)
       }
     },
     "TM18": {
@@ -4932,7 +5095,7 @@ addLayer("main", {
         }
       },
       unlocked() {
-        return player.main.tier.gte(93)
+        return player.main.tier.gte(77)
       }
     },
     "TM19": {
@@ -5014,6 +5177,143 @@ addLayer("main", {
       }
     },
 
+    // Darkness
+
+    "STM1": {
+      requirementDescription() {
+        let STATE = []
+        if (hasMilestone(this.layer, this.id)) STATE.push('<img src="images/Checkmark_White.png" width="32" height="32">')
+        return `<b style="font-size:32px; text-shadow: 0px 0px 10px #000000">Super Tier 1 ${STATE}</b>`
+      },
+      done() { return player.main.supertier.gte(1) },
+      effectDescription: `<b style="font-size:22px">
+      + Unlock Darkness`,
+      style() {
+        return {
+          "background-image": "url('images/MasteryI.png')",
+          "background-size": "50% !important",
+          "width": "600px",
+          "height": "auto",
+          "padding": "5px",
+          "border": "0px solid",
+          "border-radius": "10px",
+        }
+      }
+    },
+
+    "STM2": {
+      requirementDescription() {
+        let STATE = []
+        if (hasMilestone(this.layer, this.id)) STATE.push('<img src="images/Checkmark_White.png" width="32" height="32">')
+        return `<b style="font-size:32px; text-shadow: 0px 0px 10px #000000">Super Tier 2 ${STATE}</b>`
+      },
+      done() { return player.main.supertier.gte(2) },
+      effectDescription: `<b style="font-size:22px">
+      + 10x Darkness Gain`,
+      style() {
+        return {
+          "background-image": "url('images/MasteryI.png')",
+          "background-size": "50% !important",
+          "width": "600px",
+          "height": "auto",
+          "padding": "5px",
+          "border": "0px solid",
+          "border-radius": "10px",
+        }
+      }
+    },
+
+    "STM3": {
+      requirementDescription() {
+        let STATE = []
+        if (hasMilestone(this.layer, this.id)) STATE.push('<img src="images/Checkmark_White.png" width="32" height="32">')
+        return `<b style="font-size:32px; text-shadow: 0px 0px 10px #000000">Super Tier 3 ${STATE}</b>`
+      },
+      done() { return player.main.supertier.gte(3) },
+      effectDescription: `<b style="font-size:22px">
+      + 200x Darkness Gain<br>
+      + Unlock Factory Automator`,
+      style() {
+        return {
+          "background-image": "url('images/MasteryI.png')",
+          "background-size": "50% !important",
+          "width": "600px",
+          "height": "auto",
+          "padding": "5px",
+          "border": "0px solid",
+          "border-radius": "10px",
+        }
+      }
+    },
+
+    "STM4": {
+      requirementDescription() {
+        let STATE = []
+        if (hasMilestone(this.layer, this.id)) STATE.push('<img src="images/Checkmark_White.png" width="32" height="32">')
+        return `<b style="font-size:32px; text-shadow: 0px 0px 10px #000000">Super Tier 5 ${STATE}</b>`
+      },
+      done() { return player.main.supertier.gte(5) },
+      effectDescription: `<b style="font-size:22px">
+      + 1,500x Darkness Gain<br>
+      + Unlock Oreo Automator`,
+      style() {
+        return {
+          "background-image": "url('images/MasteryI.png')",
+          "background-size": "50% !important",
+          "width": "600px",
+          "height": "auto",
+          "padding": "5px",
+          "border": "0px solid",
+          "border-radius": "10px",
+        }
+      }
+    },
+
+    "STM5": {
+      requirementDescription() {
+        let STATE = []
+        if (hasMilestone(this.layer, this.id)) STATE.push('<img src="images/Checkmark_White.png" width="32" height="32">')
+        return `<b style="font-size:32px; text-shadow: 0px 0px 10px #000000">Super Tier 6 ${STATE}</b>`
+      },
+      done() { return player.main.supertier.gte(6) },
+      effectDescription: `<b style="font-size:22px">
+      + 5,000x Darkness Gain`,
+      style() {
+        return {
+          "background-image": "url('images/MasteryI.png')",
+          "background-size": "50% !important",
+          "width": "600px",
+          "height": "auto",
+          "padding": "5px",
+          "border": "0px solid",
+          "border-radius": "10px",
+        }
+      }
+    },
+
+    "STM6": {
+      requirementDescription() {
+        let STATE = []
+        if (hasMilestone(this.layer, this.id)) STATE.push('<img src="images/Checkmark_White.png" width="32" height="32">')
+        return `<b style="font-size:32px; text-shadow: 0px 0px 10px #000000">Super Tier 8 ${STATE}</b>`
+      },
+      done() { return player.main.supertier.gte(8) },
+      effectDescription: `<b style="font-size:22px">
+      + 10,000x Darkness Gain<br>
+      + Unlock Darkness Buyables (Coming Soon!)`,
+      style() {
+        return {
+          "background-image": "url('images/MasteryI.png')",
+          "background-size": "50% !important",
+          "width": "600px",
+          "height": "auto",
+          "padding": "5px",
+          "border": "0px solid",
+          "border-radius": "10px",
+        }
+      }
+    },
+
   },
   tabFormat: {
     "Main Progression": {
@@ -5079,6 +5379,17 @@ addLayer("main", {
             "h-line",
             "blank",
           ["microtabs", "FunnyZone", { 'border-width': '0px' }],
+  ]
+    },
+    "Darkness": {
+      unlocked() { return hasMilestone("main", "TM15") },
+      content: [
+        ["raw-html", function () {
+          return options.musicToggle ? `<audio controls autoplay loop hidden><source src=music/darkness.ogg type<=audio/mp3>loop=true hidden=true autostart=true</audio>`: ``
+        }],
+            "h-line",
+            "blank",
+          ["microtabs", "Darkness", { 'border-width': '0px' }],
   ]
     },
   },
@@ -5173,16 +5484,6 @@ addLayer("main", {
         ["row", [["milestone", "TM15"]]],
         ["blank", "12px"],
         ["row", [["milestone", "TM16"]]],
-        ["blank", "3px"],
-        ["row", [["milestone", "TM17"]]],
-        ["blank", "3px"],
-        ["row", [["milestone", "TM18"]]],
-        ["blank", "12px"],
-        ["row", [["milestone", "TM19"]]],
-        ["blank", "3px"],
-        ["row", [["milestone", "TM20"]]],
-        ["blank", "3px"],
-        ["row", [["milestone", "TM21"]]],
 
     ],
       },
@@ -5307,6 +5608,8 @@ addLayer("main", {
         content: [
           "blank",
           "h-line",
+          "blank",
+          ["row", [["clickable", "T1AT3"]]],
           "blank",
           ["row", [["buyable", "Oreo Point Production"]]],
           ["row", [["buyable", "Oreo Stellar Production"]]],
@@ -5472,6 +5775,42 @@ addLayer("main", {
            ]
       }
     },
+
+    Darkness: {
+      "Darkness": {
+        content: [
+             "blank",
+             "h-line",
+             "blank",
+          ['raw-html', () => {
+            return `<MA style='font-size: 24px'>You have Super Tier #<HI style='font-size: 30px; text-shadow: 0px 0px 20px'>${formatNoDecimals(player.main.supertier)}</HI></MA>`
+                }],
+         ["raw-html", () => {
+            return `<MA style="font-size: 20px; color: #595959">You have <HI style="font-size: 24px; color: #737373; text-shadow: 0px 0px 20px">${format(player.main.drk)}</HI> Darkness</MA>`
+    }],
+    "blank",
+    ["row", [["clickable", "T2AT2"]]],
+    "blank",
+    ["row", [["clickable", "Super Tier"]]],
+    "blank",
+        "blank",
+        ["row", [["milestone", "STM1"]]],
+        ["blank", "3px"],
+        ["row", [["milestone", "STM2"]]],
+        ["blank", "3px"],
+        ["row", [["milestone", "STM3"]]],
+        ["blank", "12px"],
+        ["row", [["milestone", "STM4"]]],
+        ["blank", "3px"],
+        ["row", [["milestone", "STM5"]]],
+        ["blank", "3px"],
+        ["row", [["milestone", "STM6"]]],
+        ["blank", "12px"],
+
+    ],
+  },
+    },
+
   },
   row: 0,
   layerShown() { return true }
