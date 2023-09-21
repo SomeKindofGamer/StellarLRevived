@@ -5190,7 +5190,7 @@ addLayer("main", {
       + Unlock Darkness`,
       style() {
         return {
-          "background-image": "url('images/TCH2.png')",
+          "background-image": "url('images/STier.png')",
           "background-size": "50% !important",
           "width": "600px",
           "height": "auto",
@@ -5212,7 +5212,7 @@ addLayer("main", {
       + 10x Darkness Gain`,
       style() {
         return {
-          "background-image": "url('images/TCH2.png')",
+          "background-image": "url('images/STier.png')",
           "background-size": "50% !important",
           "width": "600px",
           "height": "auto",
@@ -5235,7 +5235,7 @@ addLayer("main", {
       + Unlock Factory Automator`,
       style() {
         return {
-          "background-image": "url('images/TCH2.png')",
+          "background-image": "url('images/STier.png')",
           "background-size": "50% !important",
           "width": "600px",
           "height": "auto",
@@ -5258,7 +5258,7 @@ addLayer("main", {
       + Unlock Oreo Automator`,
       style() {
         return {
-          "background-image": "url('images/TCH2.png')",
+          "background-image": "url('images/STier2.png')",
           "background-size": "50% !important",
           "width": "600px",
           "height": "auto",
@@ -5280,7 +5280,7 @@ addLayer("main", {
       + 5,000x Darkness Gain`,
       style() {
         return {
-          "background-image": "url('images/TCH2.png')",
+          "background-image": "url('images/STier2.png')",
           "background-size": "50% !important",
           "width": "600px",
           "height": "auto",
@@ -5303,7 +5303,7 @@ addLayer("main", {
       + Unlock Darkness Buyables (Coming Soon!)`,
       style() {
         return {
-          "background-image": "url('images/TCH2.png')",
+          "background-image": "url('images/STier2.png')",
           "background-size": "50% !important",
           "width": "600px",
           "height": "auto",
